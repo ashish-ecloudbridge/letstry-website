@@ -67,37 +67,74 @@
           </div>
         </div>
 
-        <div class="rounded-2xl border border-stone-200 bg-white p-4 shadow-panel lg:w-[28rem]">
-          <div class="flex flex-col gap-3">
-            <label for="admin-token" class="text-xs font-semibold uppercase tracking-[0.22em] text-stone-500">
-              Admin Bearer Token
-            </label>
-            <div class="flex flex-col gap-2 sm:flex-row">
-              <input
-                id="admin-token"
-                type="password"
-                placeholder="Paste Google access token"
-                class="w-full rounded-xl border border-stone-300 bg-stone-50 px-4 py-3 text-sm outline-none transition focus:border-gold focus:bg-white"
-              />
-              <button
-                id="save-token-btn"
-                type="button"
-                class="rounded-xl bg-ink px-4 py-3 text-sm font-medium text-white transition hover:bg-stone-800"
-              >
-                Save Token
-              </button>
+        <div class="flex flex-col gap-4 sm:flex-row lg:shrink-0">
+          <!-- Token Block -->
+          <div class="rounded-2xl border border-stone-200 bg-white p-4 shadow-panel sm:w-80">
+            <div class="flex flex-col gap-3">
+              <label for="admin-token" class="text-xs font-semibold uppercase tracking-[0.22em] text-stone-500">
+                Admin Bearer Token
+              </label>
+              <div class="flex flex-col gap-2 sm:flex-row">
+                <input
+                  id="admin-token"
+                  type="password"
+                  placeholder="Bearer token"
+                  class="w-full rounded-xl border border-stone-300 bg-stone-50 px-3 py-2 text-sm outline-none transition focus:border-gold focus:bg-white"
+                />
+                <button
+                  id="save-token-btn"
+                  type="button"
+                  class="rounded-xl bg-ink px-3 py-2 text-sm font-medium text-white transition hover:bg-stone-800"
+                >
+                  Save
+                </button>
+              </div>
+              <div class="flex items-center justify-between gap-2">
+                <p id="auth-status" class="text-[11px] text-stone-500 truncate">
+                  Provide token to query API.
+                </p>
+                <button
+                  id="clear-token-btn"
+                  type="button"
+                  class="text-[10px] font-semibold uppercase tracking-[0.18em] text-stone-400 transition hover:text-stone-700"
+                >
+                  Clear
+                </button>
+              </div>
             </div>
-            <div class="flex items-center justify-between gap-3">
-              <p id="auth-status" class="text-xs text-stone-500">
-                Provide an admin token to load the protected analytics summary.
-              </p>
-              <button
-                id="clear-token-btn"
-                type="button"
-                class="text-xs font-semibold uppercase tracking-[0.18em] text-stone-400 transition hover:text-stone-700"
-              >
-                Clear
-              </button>
+          </div>
+
+          <!-- Mode / Simulator Control Block -->
+          <div class="rounded-2xl border border-stone-200 bg-white p-4 shadow-panel sm:w-80">
+            <div class="flex flex-col gap-3">
+              <div class="flex items-center justify-between">
+                <label class="text-xs font-semibold uppercase tracking-[0.22em] text-stone-500">
+                  Dashboard Mode
+                </label>
+                <span id="mode-badge" class="rounded-full bg-amber-50 border border-amber-200 px-2.5 py-0.5 text-[9px] font-bold text-amber-700 uppercase tracking-wider">
+                  Demo Mode
+                </span>
+              </div>
+              
+              <div class="flex items-center justify-between border-b border-stone-100 pb-1.5">
+                <span class="text-xs text-stone-600">Query Live API</span>
+                <button id="toggle-mode-btn" type="button" class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-stone-200 transition-colors duration-200 ease-in-out focus:outline-none">
+                  <span class="sr-only">Toggle Mode</span>
+                  <span id="toggle-mode-dot" aria-hidden="true" class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out translate-x-0"></span>
+                </button>
+              </div>
+
+              <div class="flex flex-col gap-1.5">
+                <span class="text-[10px] font-semibold uppercase tracking-[0.18em] text-stone-400">Add Simulated Events</span>
+                <div class="grid grid-cols-2 gap-2">
+                  <button id="sim-tryon-btn" type="button" class="rounded-lg border border-stone-200 bg-stone-50 py-1 text-[11px] font-semibold text-stone-700 hover:bg-stone-100 transition active:scale-[0.98]">
+                    + Try-On
+                  </button>
+                  <button id="sim-click-btn" type="button" class="rounded-lg border border-stone-200 bg-stone-50 py-1 text-[11px] font-semibold text-stone-700 hover:bg-stone-100 transition active:scale-[0.98]">
+                    + Aff. Click
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -255,12 +292,10 @@
           </div>
         </div>
       </section>
-    </div>
-
-    <script>
+<script>
       const SUMMARY_ENDPOINT = "http://127.0.0.1:8888/v1/admin/analytics/summary";
       const TOKEN_STORAGE_KEY = "letstryAdminBearerToken";
-      const REFRESH_INTERVAL_MS = 30_000;
+      const REFRESH_INTERVAL_MS = 15_000; // Refresh faster for smoother telemetry simulation
       const AFFILIATE_BASELINE_CONVERSION_RATE = 0.02;
       const AFFILIATE_AVERAGE_COMMISSION_RATE = 0.1;
 
@@ -268,6 +303,50 @@
       let pieChart = null;
       let refreshTimer = null;
       let hasRenderedOnce = false;
+      let isDemoMode = true; // Default to Demo Mode when no live API is connected
+
+      // Simulated base data
+      let mockSummaryData = {
+        active_registered_users: 2184,
+        active_users_trend_percent: 14.25,
+        total_try_ons: 38450,
+        total_try_ons_trend_percent: 18.20,
+        most_popular_brand: "Zara",
+        most_popular_brand_share: 36.4,
+        estimated_revenue_commission_generated: 15480.00,
+        estimated_conversion_rate: 2.50,
+        total_outbound_affiliate_clicks: 6192,
+        daily_try_on_volume: [
+          { day: "2026-05-19", try_on_count: 4200 },
+          { day: "2026-05-20", try_on_count: 4800 },
+          { day: "2026-05-21", try_on_count: 5100 },
+          { day: "2026-05-22", try_on_count: 4900 },
+          { day: "2026-05-23", try_on_count: 5500 },
+          { day: "2026-05-24", try_on_count: 6800 },
+          { day: "2026-05-25", try_on_count: 7150 }
+        ],
+        interaction_distribution: {
+          categories: {
+            "Jackets & Coats": 15400,
+            "Shirts & Tops": 11200,
+            "Knitwear": 7800,
+            "Vests & Denim": 4050
+          }
+        },
+        affiliate_clicks_by_merchant: {
+          "zara.com": 2480,
+          "hm.com": 1640,
+          "nordstrom.com": 980,
+          "farfetch.com": 720,
+          "net-a-porter.com": 372
+        },
+        recent_activity: [
+          { timestamp: "2026-05-25T18:05:00Z", user_id: "usr_9k2m81", brand_store: "Zara", apparel_item: "Structured Leather Jacket", action_type: "Try-On Generated" },
+          { timestamp: "2026-05-25T18:04:12Z", user_id: "usr_3x4l92", brand_store: "Nordstrom", apparel_item: "Cashmere Crewneck Sweater", action_type: "Affiliate Outbound Click" },
+          { timestamp: "2026-05-25T18:03:05Z", user_id: "usr_7p5k10", brand_store: "H&M", apparel_item: "Slim Fit Cotton Shirt", action_type: "Try-On Generated" },
+          { timestamp: "2026-05-25T18:01:45Z", user_id: "usr_2v8n94", brand_store: "Farfetch", apparel_item: "Oversized Denim Vest", action_type: "Try-On Generated" }
+        ]
+      };
 
       const tokenInput = document.getElementById("admin-token");
       const saveTokenBtn = document.getElementById("save-token-btn");
@@ -276,6 +355,17 @@
       const statusBannerEl = document.getElementById("status-banner");
       const telemetryTableBody = document.getElementById("telemetry-table-body");
       const topAffiliateMerchantsEl = document.getElementById("top-affiliate-merchants");
+      const toggleModeBtn = document.getElementById("toggle-mode-btn");
+      const toggleModeDot = document.getElementById("toggle-mode-dot");
+      const modeBadge = document.getElementById("mode-badge");
+
+      const simTryonBtn = document.getElementById("sim-tryon-btn");
+      const simClickBtn = document.getElementById("sim-click-btn");
+
+      const brands = ["Zara", "H&M", "Nordstrom", "Farfetch", "Net-A-Porter"];
+      const merchantDomains = ["zara.com", "hm.com", "nordstrom.com", "farfetch.com", "net-a-porter.com"];
+      const garments = ["Structured Leather Jacket", "Slim Fit Cotton Shirt", "Oversized Denim Vest", "Cashmere Crewneck Sweater"];
+      const categories = ["Jackets & Coats", "Shirts & Tops", "Vests & Denim", "Knitwear"];
 
       function getStoredToken() {
         try {
@@ -299,13 +389,13 @@
 
       function showBanner(message, tone = "info") {
         const tones = {
-          info: "border-stone-200 bg-white text-stone-700",
-          success: "border-emerald-200 bg-emerald-50 text-emerald-700",
-          warning: "border-amber-200 bg-amber-50 text-amber-700",
-          error: "border-rose-200 bg-rose-50 text-rose-700",
+          info: "border-stone-200 bg-white text-stone-700 shadow-sm",
+          success: "border-emerald-200 bg-emerald-50 text-emerald-700 shadow-sm",
+          warning: "border-amber-200 bg-amber-50 text-amber-700 shadow-sm",
+          error: "border-rose-200 bg-rose-50 text-rose-700 shadow-sm",
         };
 
-        statusBannerEl.className = `mb-6 rounded-2xl border px-4 py-3 text-sm ${tones[tone] || tones.info}`;
+        statusBannerEl.className = `mb-6 rounded-2xl border px-4 py-3 text-sm transition duration-300 ${tones[tone] || tones.info}`;
         statusBannerEl.textContent = message;
         statusBannerEl.classList.remove("hidden");
       }
@@ -313,10 +403,10 @@
       function setAuthStatus(message, tone = "neutral") {
         const toneClasses = {
           neutral: "text-stone-500",
-          success: "text-emerald-600",
-          error: "text-rose-600",
+          success: "text-emerald-600 font-semibold",
+          error: "text-rose-600 font-semibold",
         };
-        authStatusEl.className = `text-xs ${toneClasses[tone] || toneClasses.neutral}`;
+        authStatusEl.className = `text-[11px] ${toneClasses[tone] || toneClasses.neutral} truncate`;
         authStatusEl.textContent = message;
       }
 
@@ -347,6 +437,7 @@
             day: "numeric",
             hour: "2-digit",
             minute: "2-digit",
+            second: "2-digit"
           });
         } catch {
           return value || "—";
@@ -366,7 +457,7 @@
         return (
           Number(clickCount || 0) *
           AFFILIATE_BASELINE_CONVERSION_RATE *
-          AFFILIATE_AVERAGE_COMMISSION_RATE
+          AFFILIATE_AVERAGE_COMMISSION_RATE * 59.99 // average garment price
         );
       }
 
@@ -388,8 +479,8 @@
         const el = document.getElementById(elId);
         if (!el) return;
         el.innerHTML = `
-          <div class="text-3xl font-semibold tracking-tight">${valueMarkup}</div>
-          <div class="mt-3">${subMarkup}</div>
+          <div class="text-3xl font-semibold tracking-tight transition duration-300 hover:scale-[1.02]">${valueMarkup}</div>
+          <div class="mt-3 text-xs">${subMarkup}</div>
         `;
       }
 
@@ -399,7 +490,14 @@
 
         if (!barChart) {
           shell.innerHTML = '<canvas id="bar-chart" aria-label="Daily try-on volume chart"></canvas>';
-          const ctx = document.getElementById("bar-chart");
+          const canvasEl = document.getElementById("bar-chart");
+          const ctx = canvasEl.getContext("2d");
+          
+          // Create gradient for bars
+          const gradient = ctx.createLinearGradient(0, 0, 0, 320);
+          gradient.addColorStop(0, "rgba(29, 78, 216, 0.85)"); // bright blue
+          gradient.addColorStop(1, "rgba(139, 92, 246, 0.2)"); // soft purple
+
           barChart = new Chart(ctx, {
             type: "bar",
             data: {
@@ -408,9 +506,10 @@
                 {
                   label: "Try-Ons",
                   data: values,
-                  borderRadius: 12,
-                  backgroundColor: "rgba(184, 149, 108, 0.88)",
-                  hoverBackgroundColor: "rgba(155, 122, 83, 0.95)",
+                  borderRadius: 8,
+                  backgroundColor: gradient,
+                  hoverBackgroundColor: "rgba(29, 78, 216, 0.95)",
+                  borderWidth: 0,
                 },
               ],
             },
@@ -419,16 +518,24 @@
               maintainAspectRatio: false,
               plugins: {
                 legend: { display: false },
+                tooltip: {
+                  backgroundColor: "#0b1120",
+                  titleFont: { family: "Plus Jakarta Sans", size: 12, weight: "bold" },
+                  bodyFont: { family: "Plus Jakarta Sans", size: 11 },
+                  padding: 10,
+                  cornerRadius: 8,
+                  displayColors: false
+                }
               },
               scales: {
                 x: {
                   grid: { display: false },
-                  ticks: { color: "#57534e" },
+                  ticks: { color: "#64748b", font: { family: "Plus Jakarta Sans", size: 10 } },
                 },
                 y: {
                   beginAtZero: true,
-                  ticks: { precision: 0, color: "#57534e" },
-                  grid: { color: "rgba(120, 113, 108, 0.12)" },
+                  ticks: { precision: 0, color: "#64748b", font: { family: "Plus Jakarta Sans", size: 10 } },
+                  grid: { color: "rgba(148, 163, 184, 0.08)" },
                 },
               },
             },
@@ -445,35 +552,51 @@
         const shell = document.getElementById("pie-chart-shell");
         if (!shell) return;
 
-        const colors = ["#b8956c", "#1f2937", "#e7cfa5", "#8b5e3c", "#cbd5e1"];
+        const colors = [
+          "rgba(29, 78, 216, 0.8)",   // Blue
+          "rgba(139, 92, 246, 0.8)",  // Purple
+          "rgba(236, 72, 153, 0.8)",  // Pink
+          "rgba(245, 158, 11, 0.8)"   // Amber
+        ];
 
         if (!pieChart) {
           shell.innerHTML = '<canvas id="pie-chart" aria-label="Category distribution chart"></canvas>';
-          const ctx = document.getElementById("pie-chart");
+          const ctx = document.getElementById("pie-chart").getContext("2d");
           pieChart = new Chart(ctx, {
-            type: "pie",
+            type: "doughnut",
             data: {
               labels,
               datasets: [
                 {
                   data: values,
                   backgroundColor: colors,
-                  borderWidth: 0,
+                  borderWidth: 2,
+                  borderColor: "#ffffff",
+                  hoverOffset: 6
                 },
               ],
             },
             options: {
               responsive: true,
               maintainAspectRatio: false,
+              cutout: "70%",
               plugins: {
                 legend: {
                   position: "bottom",
                   labels: {
-                    color: "#57534e",
+                    color: "#475569",
+                    font: { family: "Plus Jakarta Sans", size: 10, weight: "600" },
                     usePointStyle: true,
-                    padding: 18,
+                    padding: 12,
                   },
                 },
+                tooltip: {
+                  backgroundColor: "#0b1120",
+                  titleFont: { family: "Plus Jakarta Sans", size: 12, weight: "bold" },
+                  bodyFont: { family: "Plus Jakarta Sans", size: 11 },
+                  padding: 10,
+                  cornerRadius: 8,
+                }
               },
             },
           });
@@ -497,28 +620,28 @@
         if (!entries.length) {
           topAffiliateMerchantsEl.innerHTML = `
             <div class="rounded-2xl border border-dashed border-stone-200 bg-stone-50 px-4 py-8 text-center text-sm text-stone-500">
-              No affiliate click activity yet in the current reporting window.
+              No affiliate click activity yet.
             </div>
           `;
           return;
         }
 
         topAffiliateMerchantsEl.innerHTML = `
-          <div class="space-y-3">
+          <div class="space-y-2.5">
             ${entries
               .map(
                 ([domain, clicks], index) => `
-                  <div class="flex flex-col gap-3 rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div class="flex flex-col gap-2 rounded-2xl border border-emerald-100 bg-emerald-50/50 px-4 py-3.5 sm:flex-row sm:items-center sm:justify-between transition duration-200 hover:bg-emerald-50">
                     <div class="min-w-0">
-                      <p class="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-700">#${index + 1} Merchant</p>
-                      <p class="mt-1 truncate text-base font-semibold text-stone-900">${escapeHtml(domain)}</p>
+                      <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-700">#${index + 1} Merchant</p>
+                      <p class="mt-0.5 truncate text-sm font-semibold text-stone-900">${escapeHtml(domain)}</p>
                     </div>
-                    <div class="flex flex-wrap items-center gap-2 text-sm">
-                      <span class="inline-flex rounded-full bg-white px-3 py-1 font-medium text-stone-700">
-                        ${formatNumber(clicks)} affiliate clicks
+                    <div class="flex flex-wrap items-center gap-1.5 text-xs">
+                      <span class="inline-flex rounded-full bg-white px-2.5 py-0.5 font-medium text-stone-600 border border-stone-150">
+                        ${formatNumber(clicks)} clicks
                       </span>
-                      <span class="inline-flex rounded-full bg-emerald-100 px-3 py-1 font-medium text-emerald-700">
-                        ${formatMoney(estimateAffiliateEarnings(clicks))} est. earnings
+                      <span class="inline-flex rounded-full bg-emerald-100/70 px-2.5 py-0.5 font-semibold text-emerald-800">
+                        ${formatMoney(estimateAffiliateEarnings(clicks))} est. commission
                       </span>
                     </div>
                   </div>
@@ -547,22 +670,22 @@
               const actionType = String(row.action_type || "");
               const isAffiliateClick = actionType.toUpperCase().includes("AFFILIATE");
               const rowClass = isAffiliateClick
-                ? "bg-emerald-50 hover:bg-emerald-100"
-                : "hover:bg-stone-50";
+                ? "bg-emerald-50/40 hover:bg-emerald-50/80 transition duration-150"
+                : "hover:bg-stone-50/80 transition duration-150";
               const badgeClass = isAffiliateClick
-                ? "bg-emerald-100 text-emerald-700"
-                : "bg-latte text-stone-700";
+                ? "bg-emerald-100 text-emerald-800 font-semibold"
+                : "bg-stone-100 text-stone-700";
 
               return `
               <tr class="${rowClass}">
-                <td class="px-4 py-3 text-stone-600">${formatTimestamp(row.timestamp)}</td>
-                <td class="px-4 py-3 font-mono text-xs text-stone-600">${escapeHtml(row.user_id || "—")}</td>
-                <td class="px-4 py-3 capitalize text-stone-700">${escapeHtml(row.brand_store || "—")}</td>
-                <td class="max-w-[18rem] truncate px-4 py-3 text-stone-700" title="${escapeHtml(
+                <td class="px-4 py-3 text-stone-600 text-xs">${formatTimestamp(row.timestamp)}</td>
+                <td class="px-4 py-3 font-mono text-xs text-stone-500">${escapeHtml(row.user_id || "—")}</td>
+                <td class="px-4 py-3 font-medium text-stone-700 capitalize text-xs">${escapeHtml(row.brand_store || "—")}</td>
+                <td class="max-w-[16rem] truncate px-4 py-3 text-stone-700 text-xs" title="${escapeHtml(
                   row.apparel_item || ""
                 )}">${escapeHtml(row.apparel_item || "—")}</td>
                 <td class="px-4 py-3">
-                  <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${badgeClass}">
+                  <span class="inline-flex rounded-full px-2.5 py-0.5 text-[10px] ${badgeClass}">
                     ${escapeHtml(actionType || "—")}
                   </span>
                 </td>
@@ -589,15 +712,15 @@
         renderKpi(
           "kpi-brand",
           summary.most_popular_brand
-            ? `${summary.most_popular_brand} - ${Number(summary.most_popular_brand_share || 0).toFixed(2)}%`
+            ? `${summary.most_popular_brand} - ${Number(summary.most_popular_brand_share || 0).toFixed(1)}%`
             : "No data",
-          `<span class="text-xs text-stone-500">Top brand share this week</span>`
+          `<span class="text-stone-500">Top brand share this week</span>`
         );
 
         renderKpi(
           "kpi-revenue",
           formatMoney(summary.estimated_revenue_commission_generated),
-          `<span class="text-xs text-stone-500">${Number(summary.estimated_conversion_rate || 0).toFixed(
+          `<span class="text-stone-500">${Number(summary.estimated_conversion_rate || 0).toFixed(
             2
           )}% estimated conversion from download clicks</span>`
         );
@@ -606,9 +729,9 @@
         renderKpi(
           "kpi-affiliate-earnings",
           formatMoney(estimateAffiliateEarnings(totalAffiliateClicks)),
-          `<span class="text-xs text-stone-500">${formatNumber(
+          `<span class="text-stone-500">${formatNumber(
             totalAffiliateClicks
-          )} outbound affiliate clicks x 2.00% conversion x 10.00% commission</span>`
+          )} outbound affiliate clicks x 2.00% conv x 10.00% comm</span>`
         );
 
         const dailySeries = Array.isArray(summary.daily_try_on_volume) ? summary.daily_try_on_volume : [];
@@ -632,44 +755,76 @@
       }
 
       async function fetchSummary() {
+        if (isDemoMode) {
+          // Render mock data in demo mode
+          renderSummary(mockSummaryData);
+          setAuthStatus("Dashboard running in simulated Demo Mode.", "success");
+          return;
+        }
+
         const token = getStoredToken().trim();
         tokenInput.value = token;
 
         if (!token) {
-          setAuthStatus("Admin token required before polling analytics.", "error");
+          setAuthStatus("Token required before live API query.", "error");
           showBanner("Set an admin Google bearer token to query the protected analytics endpoint.", "warning");
+          // Revert to demo mode if no token
+          isDemoMode = true;
+          updateModeUI();
+          renderSummary(mockSummaryData);
           return;
         }
 
-        setAuthStatus("Fetching protected analytics summary…", "neutral");
+        setAuthStatus("Fetching live analytics summary...", "neutral");
 
-        const response = await fetch(SUMMARY_ENDPOINT, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: "application/json",
-          },
-        });
+        try {
+          const response = await fetch(SUMMARY_ENDPOINT, {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              Accept: "application/json",
+            },
+          });
 
-        if (!response.ok) {
-          const text = await response.text().catch(() => "");
-          throw new Error(text || `Summary request failed (${response.status})`);
+          if (!response.ok) {
+            const text = await response.text().catch(() => "");
+            throw new Error(text || `Summary request failed (${response.status})`);
+          }
+
+          const data = await response.json();
+          renderSummary(data);
+          setAuthStatus("Connected to live server.", "success");
+          showBanner("Live telemetry summary updated successfully.", hasRenderedOnce ? "info" : "success");
+          hasRenderedOnce = true;
+        } catch (error) {
+          // Auto fall back to demo mode on connection error
+          console.error("Live API offline, falling back to Demo Mode:", error);
+          isDemoMode = true;
+          updateModeUI();
+          renderSummary(mockSummaryData);
+          setAuthStatus("Live API offline. Switched to Demo Mode.", "error");
+          showBanner("Could not connect to live operational API. Switched to simulated Demo Mode.", "warning");
         }
+      }
 
-        const data = await response.json();
-        renderSummary(data);
-        setAuthStatus("Admin analytics connected.", "success");
-        showBanner("Analytics summary updated successfully.", hasRenderedOnce ? "info" : "success");
-        hasRenderedOnce = true;
+      function updateModeUI() {
+        if (isDemoMode) {
+          toggleModeBtn.classList.remove("bg-blue-600");
+          toggleModeBtn.classList.add("bg-stone-250");
+          toggleModeDot.className = "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-250 ease-in-out translate-x-0";
+          modeBadge.textContent = "Demo Mode";
+          modeBadge.className = "rounded-full bg-amber-50 border border-amber-200 px-2.5 py-0.5 text-[9px] font-bold text-amber-700 uppercase tracking-wider";
+        } else {
+          toggleModeBtn.classList.remove("bg-stone-250");
+          toggleModeBtn.classList.add("bg-blue-600");
+          toggleModeDot.className = "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-250 ease-in-out translate-x-5";
+          modeBadge.textContent = "Live API";
+          modeBadge.className = "rounded-full bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 text-[9px] font-bold text-emerald-700 uppercase tracking-wider";
+        }
       }
 
       async function refreshLoop() {
-        try {
-          await fetchSummary();
-        } catch (error) {
-          setAuthStatus("Unable to refresh summary.", "error");
-          showBanner(error.message || "Failed to load analytics summary.", "error");
-        }
+        await fetchSummary();
       }
 
       function startAutoRefresh() {
@@ -679,26 +834,117 @@
         refreshTimer = setInterval(refreshLoop, REFRESH_INTERVAL_MS);
       }
 
+      // Event simulation handlers
+      function triggerSimulatedTryon() {
+        if (!isDemoMode) {
+          showBanner("Simulation tools are only active in Demo Mode. Toggle Live API off to test.", "warning");
+          return;
+        }
+
+        const randomUser = `usr_${Math.random().toString(36).substring(2, 8)}`;
+        const randomBrandIdx = Math.floor(Math.random() * brands.length);
+        const brand = brands[randomBrandIdx];
+        const garment = garments[Math.floor(Math.random() * garments.length)];
+        const category = categories[Math.floor(Math.random() * categories.length)];
+
+        // Update mock state
+        mockSummaryData.active_registered_users += Math.random() > 0.8 ? 1 : 0;
+        mockSummaryData.total_try_ons += 1;
+        
+        // Add to daily try-on series (last day)
+        const lastDay = mockSummaryData.daily_try_on_volume[mockSummaryData.daily_try_on_volume.length - 1];
+        lastDay.try_on_count += 1;
+
+        // Add to category distribution
+        mockSummaryData.interaction_distribution.categories[category] = (mockSummaryData.interaction_distribution.categories[category] || 0) + 1;
+
+        // Add to telemetry table
+        mockSummaryData.recent_activity.unshift({
+          timestamp: new Date().toISOString(),
+          user_id: randomUser,
+          brand_store: brand,
+          apparel_item: garment,
+          action_type: "Try-On Generated"
+        });
+        if (mockSummaryData.recent_activity.length > 8) {
+          mockSummaryData.recent_activity.pop();
+        }
+
+        renderSummary(mockSummaryData);
+        showBanner(`Simulated: user ${randomUser} tried on ${garment} at ${brand}.`, "success");
+      }
+
+      function triggerSimulatedClick() {
+        if (!isDemoMode) {
+          showBanner("Simulation tools are only active in Demo Mode. Toggle Live API off to test.", "warning");
+          return;
+        }
+
+        const randomUser = `usr_${Math.random().toString(36).substring(2, 8)}`;
+        const randomBrandIdx = Math.floor(Math.random() * brands.length);
+        const brand = brands[randomBrandIdx];
+        const domain = merchantDomains[randomBrandIdx];
+        const garment = garments[Math.floor(Math.random() * garments.length)];
+
+        // Update mock state
+        mockSummaryData.total_outbound_affiliate_clicks += 1;
+        mockSummaryData.affiliate_clicks_by_merchant[domain] = (mockSummaryData.affiliate_clicks_by_merchant[domain] || 0) + 1;
+        mockSummaryData.estimated_revenue_commission_generated += estimateAffiliateEarnings(1);
+
+        // Add to telemetry table
+        mockSummaryData.recent_activity.unshift({
+          timestamp: new Date().toISOString(),
+          user_id: randomUser,
+          brand_store: brand,
+          apparel_item: garment,
+          action_type: "Affiliate Outbound Click"
+        });
+        if (mockSummaryData.recent_activity.length > 8) {
+          mockSummaryData.recent_activity.pop();
+        }
+
+        renderSummary(mockSummaryData);
+        showBanner(`Simulated Click: user ${randomUser} clicked affiliate link for ${garment} at ${brand}.`, "success");
+      }
+
       saveTokenBtn.addEventListener("click", () => {
         const token = tokenInput.value.trim();
         setStoredToken(token);
         if (token) {
-          showBanner("Admin token saved locally in this browser.", "success");
+          showBanner("Admin token saved locally. Switching to Live API mode.", "success");
+          isDemoMode = false;
+          updateModeUI();
           refreshLoop();
         } else {
-          showBanner("Admin token cleared.", "warning");
+          showBanner("Admin token cleared. Switched to Demo Mode.", "warning");
+          isDemoMode = true;
+          updateModeUI();
+          refreshLoop();
         }
       });
 
       clearTokenBtn.addEventListener("click", () => {
         tokenInput.value = "";
         setStoredToken("");
+        isDemoMode = true;
+        updateModeUI();
         setAuthStatus("Admin token cleared.", "neutral");
-        showBanner("Admin token removed from local storage.", "warning");
+        showBanner("Admin token removed. Switched to simulated Demo Mode.", "warning");
+        refreshLoop();
       });
+
+      toggleModeBtn.addEventListener("click", () => {
+        isDemoMode = !isDemoMode;
+        updateModeUI();
+        refreshLoop();
+      });
+
+      simTryonBtn.addEventListener("click", triggerSimulatedTryon);
+      simClickBtn.addEventListener("click", triggerSimulatedClick);
 
       document.addEventListener("DOMContentLoaded", () => {
         tokenInput.value = getStoredToken();
+        updateModeUI();
         startAutoRefresh();
         refreshLoop();
       });
