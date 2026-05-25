@@ -3,24 +3,48 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>letstry.online | Any item. On you. Instantly.</title>
-    <meta
-      name="description"
-      content="letstry.online is the universal AI fitting room Chrome extension that lets shoppers try on clothing across any fashion storefront in a click."
-    />
+    
+    <!-- Primary SEO Metadata -->
+    <title>letstry.online | Universal AI Virtual Try-On Chrome Extension</title>
+    <meta name="description" content="letstry.online is the universal AI fitting room Chrome extension that lets you try on any apparel item across any fashion storefront instantly with one click." />
+    <meta name="keywords" content="AI try-on, virtual fitting room, Chrome extension fashion, try clothes on AI, letstry, virtual apparel, fashion AI extension" />
+    <meta name="author" content="letstry.online" />
+    <meta name="robots" content="index, follow" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://letstry.online/" />
+    <meta property="og:title" content="letstry.online | Any item. On you. Instantly." />
+    <meta property="og:description" content="The universal AI fitting room Chrome extension. Try on clothing across Zara, H&M, and any fashion boutique with a single click." />
+    <meta property="og:image" content="logo.png" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://letstry.online/" />
+    <meta property="twitter:title" content="letstry.online | Universal AI Virtual Try-On" />
+    <meta property="twitter:description" content="Try on any clothing item across any storefront with one click using the LetsTry Chrome extension." />
+    <meta property="twitter:image" content="logo.png" />
+    
+    <!-- Favicon and App Icons -->
+    <link rel="icon" type="image/png" href="logo.png" />
+    <link rel="apple-touch-icon" href="logo.png" />
+
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
+    
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
         theme: {
           extend: {
             fontFamily: {
-              sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+              sans: ["Plus Jakarta Sans", "Inter", "ui-sans-serif", "system-ui", "sans-serif"],
             },
             colors: {
               ink: "#0b1120",
@@ -33,17 +57,18 @@
               navy: "#0f172a",
             },
             boxShadow: {
-              glow: "0 25px 80px rgba(15, 23, 42, 0.12)",
+              glow: "0 25px 80px rgba(29, 78, 216, 0.15)",
               card: "0 12px 36px rgba(15, 23, 42, 0.08)",
             },
             backgroundImage: {
               mesh:
-                "radial-gradient(circle at top left, rgba(29,78,216,0.18), transparent 32%), radial-gradient(circle at top right, rgba(15,23,42,0.12), transparent 24%), linear-gradient(180deg, rgba(255,255,255,0.98), rgba(238,244,255,0.94))",
+                "radial-gradient(circle at top left, rgba(29,78,216,0.15), transparent 35%), radial-gradient(circle at top right, rgba(139,92,246,0.1), transparent 30%), linear-gradient(180deg, rgba(255,255,255,0.98), rgba(238,244,255,0.95))",
             },
           },
         },
       };
     </script>
+    
     <style type="text/tailwindcss">
       @layer components {
         .section-shell {
@@ -51,40 +76,95 @@
         }
 
         .nav-link {
-          @apply text-sm font-medium text-stone-600 transition hover:text-ink;
+          @apply text-sm font-semibold text-stone-600 transition hover:text-ink relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-gold after:transition-all hover:after:w-full;
         }
 
         .primary-btn {
-          @apply inline-flex items-center justify-center rounded-full bg-ink px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-black/10 transition hover:-translate-y-0.5 hover:bg-stone-800 focus:outline-none focus:ring-2 focus:ring-ink/20;
+          @apply inline-flex items-center justify-center rounded-full bg-gradient-to-r from-ink to-slate-800 px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-black/10 transition duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-blue-500/10 focus:outline-none focus:ring-2 focus:ring-ink/20;
         }
 
         .secondary-btn {
-          @apply inline-flex items-center justify-center rounded-full border border-stone-300 bg-white/80 px-5 py-3 text-sm font-semibold text-ink backdrop-blur transition hover:-translate-y-0.5 hover:border-stone-400 hover:bg-white;
+          @apply inline-flex items-center justify-center rounded-full border border-stone-300 bg-white/80 px-6 py-3.5 text-sm font-semibold text-ink backdrop-blur transition duration-300 hover:-translate-y-0.5 hover:border-stone-400 hover:bg-white hover:shadow-md;
         }
 
         .glass-panel {
-          @apply rounded-[2rem] border border-white/70 bg-white/75 shadow-glow backdrop-blur-xl;
+          @apply rounded-[2.25rem] border border-white/85 bg-white/70 shadow-glow backdrop-blur-xl;
         }
 
         .feature-card {
-          @apply rounded-[1.75rem] border border-stone-200 bg-white p-6 shadow-card transition hover:-translate-y-1 hover:shadow-glow;
+          @apply rounded-[2rem] border border-stone-200 bg-white p-8 shadow-card transition duration-300 hover:-translate-y-1 hover:shadow-glow;
         }
 
         .demo-card {
-          @apply rounded-[1.75rem] border border-stone-200 bg-white p-5 shadow-card;
+          @apply rounded-[2rem] border border-stone-200 bg-white p-6 shadow-card;
         }
 
         .eyebrow {
-          @apply text-xs font-semibold uppercase tracking-[0.28em] text-gold;
+          @apply text-xs font-bold uppercase tracking-[0.3em] text-gold;
         }
 
         .legal-link {
-          @apply text-stone-600 underline decoration-stone-300 underline-offset-4 transition hover:text-ink;
+          @apply text-stone-600 underline decoration-stone-300 underline-offset-4 transition hover:text-ink hover:decoration-ink;
         }
       }
     </style>
+    
+    <!-- Micro-interactions & Animations -->
+    <style>
+      .floating-widget {
+        animation: float 6s ease-in-out infinite;
+      }
+      @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-8px); }
+      }
+      .scanning-beam {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 6px;
+        background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.8), transparent);
+        box-shadow: 0 0 12px rgba(59, 130, 246, 0.6);
+        animation: scan 2s linear infinite;
+      }
+      @keyframes scan {
+        0% { top: 0%; }
+        50% { top: 100%; }
+        100% { top: 0%; }
+      }
+      .scroll-reveal {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .scroll-reveal.active {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    </style>
+    
+    <!-- Structured Data JSON-LD for SEO -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "letstry.online",
+        "operatingSystem": "Chrome, Brave, Edge",
+        "applicationCategory": "BrowserApplication",
+        "description": "Universal AI virtual try-on Chrome extension that lets you try on any apparel item across fashion sites instantly.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        }
+      }
+    </script>
   </head>
   <body class="bg-linen font-sans text-ink antialiased">
+    <!-- Ambient Glow Canvas -->
+    <canvas id="ambient-glow" class="fixed inset-0 -z-20 pointer-events-none opacity-60"></canvas>
+
     <div class="relative overflow-hidden">
       <div class="absolute inset-x-0 top-0 -z-10 h-[38rem] bg-mesh"></div>
       <div class="absolute left-1/2 top-20 -z-10 h-72 w-72 -translate-x-1/2 rounded-full bg-gold/20 blur-3xl"></div>
@@ -184,8 +264,8 @@
                   <div class="rounded-2xl bg-white/5 p-4">
                     <p class="text-xs uppercase tracking-[0.24em] text-stone-400">Selected store item</p>
                     <div class="mt-3 flex items-center gap-3">
-                      <div class="relative flex h-16 w-14 items-center justify-center rounded-2xl bg-gradient-to-b from-blue-100 to-slate-300">
-                        <img src="logo.png" alt="" class="absolute right-1 top-1 h-6 w-6 rounded-md object-contain shadow-sm" />
+                      <div class="relative flex h-16 w-14 items-center justify-center rounded-2xl overflow-hidden bg-slate-100 border border-white/10">
+                        <img src="assets/garment_leather_jacket.png" alt="Leather Jacket" class="h-full w-full object-cover" />
                       </div>
                       <div>
                         <p class="font-semibold">Structured leather jacket</p>
@@ -197,18 +277,14 @@
                   <div class="grid gap-4 sm:grid-cols-2">
                     <div class="rounded-2xl bg-white/5 p-4">
                       <p class="text-xs uppercase tracking-[0.24em] text-stone-400">Portrait</p>
-                      <div class="mt-3 flex h-52 items-center justify-center rounded-2xl bg-gradient-to-br from-stone-100 via-stone-300 to-stone-400">
-                        <div class="relative h-32 w-24 rounded-[2rem] bg-white/60 ring-1 ring-white/40">
-                          <img src="logo.png" alt="" class="absolute -right-2 -top-2 h-10 w-10 rounded-xl object-contain shadow-lg" />
-                        </div>
+                      <div class="mt-3 flex h-52 items-center justify-center rounded-2xl overflow-hidden border border-white/10 bg-slate-800">
+                        <img src="assets/model_neutral.png" alt="Portrait" class="h-full w-full object-cover" />
                       </div>
                     </div>
                     <div class="rounded-2xl bg-white/5 p-4">
                       <p class="text-xs uppercase tracking-[0.24em] text-stone-400">Result</p>
-                      <div class="mt-3 flex h-52 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-800 via-blue-200 to-white">
-                        <div class="rounded-full bg-white/80 px-4 py-2 text-xs font-semibold text-ink">
-                          AI fit preview ready
-                        </div>
+                      <div class="mt-3 flex h-52 items-center justify-center rounded-2xl overflow-hidden border border-white/10 bg-slate-800">
+                        <img src="assets/result_leather_jacket.png" alt="Try-On Result" class="h-full w-full object-cover" />
                       </div>
                     </div>
                   </div>
@@ -432,18 +508,38 @@
                   </span>
                 </div>
 
-                <div class="relative mt-5 overflow-hidden rounded-[1.75rem] border border-stone-200 bg-gradient-to-b from-stone-100 to-stone-200 p-3">
-                  <div id="demo-portrait-frame" class="relative mx-auto aspect-[4/5] max-w-sm overflow-hidden rounded-[1.5rem] bg-white shadow-inner">
-                    <img
-                      id="demo-result-image"
-                      alt="AI try-on preview"
-                      class="h-full w-full object-cover opacity-100 transition-opacity duration-500"
-                    />
+                <div class="relative mt-5 overflow-hidden rounded-[2rem] border border-stone-200 bg-gradient-to-b from-stone-100 to-stone-200 p-3">
+                  <!-- Compare Slider Container -->
+                  <div id="compare-slider-container" class="relative mx-auto aspect-[4/5] max-w-sm overflow-hidden rounded-[1.75rem] bg-white shadow-inner cursor-ew-resize select-none">
+                    <!-- Before Image (Base Model) -->
+                    <img src="assets/model_neutral.png" alt="Before neutral" class="absolute inset-0 h-full w-full object-cover" />
+                    
+                    <!-- After Image Container (Clipped) -->
+                    <div id="compare-after-clip" class="absolute inset-0 overflow-hidden pointer-events-none" style="clip-path: inset(0 0 0 50%);">
+                      <img
+                        id="demo-result-image"
+                        src="assets/model_neutral.png"
+                        alt="AI try-on preview"
+                        class="absolute inset-0 h-full w-full object-cover"
+                      />
+                    </div>
+
+                    <!-- Scanning Beam Animation Overlay (active during load) -->
+                    <div id="scanning-beam" class="hidden absolute left-0 right-0 h-2 bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-75 shadow-[0_0_12px_rgba(59,130,246,0.6)]" style="top: 0;"></div>
+
+                    <!-- Drag Handle -->
+                    <div id="compare-handle" class="absolute inset-y-0 w-1 bg-white flex items-center justify-center shadow-[0_0_8px_rgba(0,0,0,0.2)]" style="left: 50%;">
+                      <div class="h-10 w-10 rounded-full bg-white border border-slate-200 shadow-md flex items-center justify-between px-2 text-slate-400 text-xs font-bold">
+                        <span>◂</span><span>▸</span>
+                      </div>
+                    </div>
+
+                    <!-- Status Overlay -->
                     <div
                       id="demo-overlay"
-                      class="pointer-events-none absolute inset-0 flex items-end justify-center bg-gradient-to-t from-black/45 via-black/5 to-transparent px-6 pb-6 opacity-0 transition-opacity duration-300"
+                      class="pointer-events-none absolute inset-x-4 bottom-4 flex items-end justify-center opacity-0 transition-opacity duration-300 z-10"
                     >
-                      <div class="w-full rounded-2xl bg-white/90 p-4 shadow-lg backdrop-blur">
+                      <div class="w-full rounded-2xl bg-white/95 p-4 shadow-lg backdrop-blur">
                         <div class="flex items-center justify-between gap-3">
                           <div>
                             <p id="demo-status-title" class="text-sm font-semibold text-ink">Select a garment to begin</p>
@@ -451,12 +547,8 @@
                               The simulator will stage the tailoring workflow here.
                             </p>
                           </div>
-                          <div class="flex items-center gap-2 rounded-full bg-stone-100 px-3 py-1 text-xs font-semibold text-stone-600">
-                            <img src="logo.png" alt="" class="h-6 w-6 rounded-md object-contain shadow-sm" />
-                            <span>Ready</span>
-                          </div>
                         </div>
-                        <div class="mt-4 h-2 overflow-hidden rounded-full bg-stone-200">
+                        <div class="mt-3 h-1.5 overflow-hidden rounded-full bg-stone-200">
                           <div
                             id="demo-progress-bar"
                             class="h-full w-0 rounded-full bg-gradient-to-r from-blue-500 to-slate-900 transition-all duration-300"
@@ -561,159 +653,36 @@
           </div>
         </div>
       </footer>
-    </div>
-
-    <script>
-      const defaultPortraitSvg = `
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 800">
-          <defs>
-            <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#f6efe5"/>
-              <stop offset="100%" stop-color="#d8c5ad"/>
-            </linearGradient>
-          </defs>
-          <rect width="640" height="800" rx="48" fill="url(#bg)"/>
-          <circle cx="320" cy="250" r="112" fill="#f8d9bf"/>
-          <path d="M220 430c28-70 192-70 220 0l30 244H190z" fill="#fcfaf7"/>
-          <path d="M244 206c18-76 134-103 188-30 19 25 25 57 17 88-55-9-104-37-136-78-14 24-41 45-79 58-5-12-7-24-7-38z" fill="#463327"/>
-          <rect x="240" y="560" width="160" height="170" rx="38" fill="#ffffff" opacity="0.82"/>
-          <text x="320" y="646" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="26" fill="#6b7280">
-            Portrait
-          </text>
-          <text x="320" y="680" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="22" fill="#9ca3af">
-            placeholder
-          </text>
-        </svg>
-      `;
-
+      <script>
       const garmentOptions = [
         {
           id: "leather-jacket",
           name: "Leather Jacket",
           copy: "Structured outerwear with a polished downtown silhouette.",
-          garmentSvg: `
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 360">
-              <rect width="400" height="360" rx="36" fill="#f8f5ef"/>
-              <path d="M138 58l62 26 62-26 28 58-20 32 12 144H118l12-144-20-32z" fill="#2d2a28"/>
-              <path d="M200 86v206" stroke="#cbbba2" stroke-width="6"/>
-              <path d="M144 64l56 114-34 40-42-68zM256 64l-56 114 34 40 42-68z" fill="#1a1817"/>
-              <path d="M114 116l-30 44 24 30M286 116l30 44-24 30" stroke="#5b5248" stroke-width="10" stroke-linecap="round"/>
-            </svg>
-          `,
-          resultSvg: `
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 800">
-              <defs>
-                <linearGradient id="r1" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stop-color="#f7f1e8"/>
-                  <stop offset="100%" stop-color="#d6b48d"/>
-                </linearGradient>
-              </defs>
-              <rect width="640" height="800" rx="48" fill="url(#r1)"/>
-              <circle cx="320" cy="228" r="108" fill="#f7d7be"/>
-              <path d="M228 426c22-58 162-62 184 0l32 264H196z" fill="#2a2623"/>
-              <path d="M240 180c14-68 118-99 178-36 22 22 31 56 24 92-55-11-105-37-138-76-12 23-37 44-73 60-8-14-11-26-11-40z" fill="#49362a"/>
-              <path d="M188 394l74 32 58-32 52 32-36 254H212l-36-254z" fill="#25211f"/>
-              <path d="M320 426v248" stroke="#b9aa98" stroke-width="6"/>
-              <path d="M208 406l112 126 112-126" stroke="#3c3632" stroke-width="18" fill="none" stroke-linecap="round"/>
-            </svg>
-          `,
+          garmentImg: "assets/garment_leather_jacket.png",
+          resultImg: "assets/result_leather_jacket.png"
         },
         {
           id: "denim-vest",
           name: "Denim Vest",
           copy: "Layer-friendly denim with a relaxed streetwear energy.",
-          garmentSvg: `
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 360">
-              <rect width="400" height="360" rx="36" fill="#f8f5ef"/>
-              <path d="M138 64l62 22 62-22 24 58-20 40 8 136H124l8-136-20-40z" fill="#6d91b4"/>
-              <path d="M200 84v214" stroke="#d7e4ef" stroke-width="6"/>
-              <path d="M154 92l46 84-22 30-52-74zM246 92l-46 84 22 30 52-74z" fill="#557b9e"/>
-              <rect x="138" y="202" width="42" height="34" rx="10" fill="#84a6c6"/>
-              <rect x="220" y="202" width="42" height="34" rx="10" fill="#84a6c6"/>
-            </svg>
-          `,
-          resultSvg: `
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 800">
-              <defs>
-                <linearGradient id="r2" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stop-color="#f6f6f4"/>
-                  <stop offset="100%" stop-color="#b8cfe0"/>
-                </linearGradient>
-              </defs>
-              <rect width="640" height="800" rx="48" fill="url(#r2)"/>
-              <circle cx="320" cy="228" r="108" fill="#f5d8c3"/>
-              <path d="M222 418c20-62 176-62 196 0l26 258H196z" fill="#fbfaf8"/>
-              <path d="M248 182c22-70 136-92 187-26 17 22 22 54 14 84-52-11-98-37-130-72-13 22-40 42-78 56-6-14-7-26-7-42z" fill="#3f2f29"/>
-              <path d="M198 394l78 36 44-24 58 24 26 248H234l-36-242z" fill="#6b8fb4"/>
-              <path d="M320 430v248" stroke="#dde6ef" stroke-width="6"/>
-              <rect x="232" y="500" width="58" height="44" rx="12" fill="#89a9c7"/>
-              <rect x="350" y="500" width="58" height="44" rx="12" fill="#89a9c7"/>
-            </svg>
-          `,
+          garmentImg: "assets/garment_denim_vest.png",
+          resultImg: "assets/result_denim_vest.png"
         },
         {
           id: "linen-shirt",
           name: "Linen Shirt",
           copy: "Lightweight tailoring designed for crisp summer browsing.",
-          garmentSvg: `
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 360">
-              <rect width="400" height="360" rx="36" fill="#f8f5ef"/>
-              <path d="M136 70l64 28 64-28 28 54-26 44 18 132H116l18-132-26-44z" fill="#efe2c8"/>
-              <path d="M200 98v204" stroke="#b8956c" stroke-width="5"/>
-              <path d="M142 76l58 96-28 34-52-72zM258 76l-58 96 28 34 52-72z" fill="#e3d3b4"/>
-              <path d="M150 216h36M214 216h36" stroke="#c3a47a" stroke-width="8" stroke-linecap="round"/>
-            </svg>
-          `,
-          resultSvg: `
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 800">
-              <defs>
-                <linearGradient id="r3" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stop-color="#fff8ef"/>
-                  <stop offset="100%" stop-color="#ead7ba"/>
-                </linearGradient>
-              </defs>
-              <rect width="640" height="800" rx="48" fill="url(#r3)"/>
-              <circle cx="320" cy="228" r="108" fill="#f7d7bd"/>
-              <path d="M222 418c18-62 176-62 196 0l28 258H194z" fill="#f9f7f2"/>
-              <path d="M244 184c20-70 130-100 186-30 18 23 24 54 18 85-55-11-103-38-137-75-12 23-39 43-78 59-7-14-9-26-9-39z" fill="#47342c"/>
-              <path d="M198 392l82 40 40-22 60 22 28 248H228l-30-248z" fill="#eee0c6"/>
-              <path d="M320 430v250" stroke="#c3a47a" stroke-width="6"/>
-              <circle cx="320" cy="512" r="5" fill="#b48c5d"/>
-              <circle cx="320" cy="552" r="5" fill="#b48c5d"/>
-              <circle cx="320" cy="592" r="5" fill="#b48c5d"/>
-            </svg>
-          `,
+          garmentImg: "assets/garment_linen_shirt.png",
+          resultImg: "assets/result_linen_shirt.png"
         },
         {
           id: "cashmere-knit",
           name: "Cashmere Knit",
           copy: "Soft texture with elevated neutral styling for premium shoppers.",
-          garmentSvg: `
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 360">
-              <rect width="400" height="360" rx="36" fill="#f8f5ef"/>
-              <path d="M130 84l70 24 70-24 28 52-26 36 20 130H108l20-130-26-36z" fill="#d7c0af"/>
-              <path d="M200 108v194" stroke="#f7efe8" stroke-width="5"/>
-              <path d="M154 110l46 78-26 30-54-70zM246 110l-46 78 26 30 54-70z" fill="#c7ab96"/>
-              <path d="M140 228c36 12 84 18 120 18s84-6 120-18" stroke="#eadccf" stroke-width="6" fill="none"/>
-            </svg>
-          `,
-          resultSvg: `
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 800">
-              <defs>
-                <linearGradient id="r4" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stop-color="#f9f4ef"/>
-                  <stop offset="100%" stop-color="#d8bfab"/>
-                </linearGradient>
-              </defs>
-              <rect width="640" height="800" rx="48" fill="url(#r4)"/>
-              <circle cx="320" cy="228" r="108" fill="#f5d7bf"/>
-              <path d="M224 420c20-62 172-62 194 0l26 256H196z" fill="#d2baa8"/>
-              <path d="M246 186c22-70 132-96 187-28 17 22 23 55 16 84-54-12-100-38-133-73-12 22-39 42-78 58-6-13-8-25-8-41z" fill="#4c3a31"/>
-              <path d="M202 398l78 36 40-16 58 16 30 246H232l-30-246z" fill="#cfb5a2"/>
-              <path d="M214 486c58 16 154 16 212 0M214 538c58 16 154 16 212 0" stroke="#e9ddcf" stroke-width="7" fill="none"/>
-            </svg>
-          `,
-        },
+          garmentImg: "assets/garment_cashmere_knit.png",
+          resultImg: "assets/result_cashmere_knit.png"
+        }
       ];
 
       const resultImage = document.getElementById("demo-result-image");
@@ -730,6 +699,7 @@
       const walkthroughCopy = document.getElementById("walkthrough-copy");
       const walkthroughProgress = document.getElementById("walkthrough-progress");
       const walkthroughStepList = document.getElementById("walkthrough-step-list");
+      const scanningBeam = document.getElementById("scanning-beam");
 
       const walkthroughSteps = [
         {
@@ -757,18 +727,6 @@
       let activeSimulation = null;
       let activeWalkthroughStep = 0;
 
-      function svgToDataUri(svg) {
-        return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg.replace(/\n\s+/g, " ").trim())}`;
-      }
-
-      function setPortraitImage(svgMarkup) {
-        resultImage.classList.add("opacity-0");
-        window.setTimeout(() => {
-          resultImage.src = svgToDataUri(svgMarkup);
-          resultImage.classList.remove("opacity-0");
-        }, 180);
-      }
-
       function setActiveTile(tileId) {
         const tiles = garmentGrid.querySelectorAll("[data-garment-tile]");
         tiles.forEach((tile) => {
@@ -785,18 +743,18 @@
             (item) => `
               <button
                 type="button"
-                class="group rounded-[1.5rem] border border-stone-200 bg-white p-4 text-left transition hover:-translate-y-0.5 hover:border-stone-300 hover:shadow-card"
+                class="group rounded-[1.75rem] border border-stone-200 bg-white p-4 text-left transition hover:-translate-y-0.5 hover:border-stone-300 hover:shadow-card"
                 data-garment-tile="${item.id}"
                 data-garment-id="${item.id}"
               >
-                <div class="overflow-hidden rounded-[1.25rem] border border-stone-200 bg-stone-50">
-                      <img src="${svgToDataUri(item.garmentSvg)}" alt="${item.name}" class="h-44 w-full object-cover transition duration-300 group-hover:scale-[1.02]" />
+                <div class="overflow-hidden rounded-[1.25rem] border border-stone-200 bg-stone-50 aspect-video relative">
+                  <img src="${item.garmentImg}" alt="${item.name}" class="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]" />
                 </div>
                 <div class="mt-4">
                   <div class="flex items-center justify-between gap-3">
                     <h4 class="text-base font-semibold text-ink">${item.name}</h4>
                     <span class="inline-flex items-center gap-2 rounded-full bg-stone-100 px-3 py-1 text-xs font-semibold text-stone-500">
-                      <img src="logo.png" alt="" class="h-6 w-6 rounded-md object-contain shadow-sm" />
+                      <img src="logo.png" alt="" class="h-6 w-6 rounded-md object-contain shadow-sm animate-pulse" />
                       <span>Demo</span>
                     </span>
                   </div>
@@ -825,6 +783,7 @@
 
         setActiveTile(item.id);
         demoOverlay.classList.remove("opacity-0");
+        scanningBeam.classList.remove("hidden");
         demoBadge.textContent = "Simulating fit";
         demoBadge.className =
           "rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700";
@@ -850,7 +809,14 @@
           }, 80),
           finishTimer: window.setTimeout(() => {
             window.clearInterval(activeSimulation.progressTimer);
-            setPortraitImage(item.resultSvg);
+            
+            // Set image source and trigger the compare slide transition
+            resultImage.src = item.resultImg;
+            scanningBeam.classList.add("hidden");
+            
+            // Wipe comparison from 100% (only before t-shirt visible) to 50% split view
+            animateSlider(100, 50, 1000);
+
             demoProgressBar.style.width = "100%";
             demoStageName.textContent = "Completed";
             demoOutputState.textContent = `${item.name} applied`;
@@ -882,7 +848,7 @@
                 index === stepIndex
                   ? "border-blue-300 bg-blue-400/10 text-white"
                   : "border-white/10 bg-white/5 text-slate-300"
-              } px-3 py-2 transition">
+              } px-3 py-2 transition duration-300">
                 <span class="flex h-7 w-7 items-center justify-center rounded-full ${
                   index === stepIndex ? "bg-blue-400 text-slate-950" : "bg-white/10 text-slate-200"
                 } text-xs font-bold">
@@ -895,10 +861,150 @@
           .join("");
       }
 
+      // Ambient Glow Canvas Animation
+      function initAmbientGlow() {
+        const canvas = document.getElementById("ambient-glow");
+        if (!canvas) return;
+        const ctx = canvas.getContext("2d");
+        let width = (canvas.width = window.innerWidth);
+        let height = (canvas.height = window.innerHeight);
+
+        window.addEventListener("resize", () => {
+          width = canvas.width = window.innerWidth;
+          height = canvas.height = window.innerHeight;
+        });
+
+        const dots = [
+          { x: width * 0.15, y: height * 0.25, vx: 0.15, vy: 0.08, r: 350, color: "rgba(59, 130, 246, 0.06)" },
+          { x: width * 0.85, y: height * 0.35, vx: -0.1, vy: 0.12, r: 400, color: "rgba(139, 92, 246, 0.05)" },
+          { x: width * 0.5, y: height * 0.75, vx: 0.08, vy: -0.08, r: 380, color: "rgba(236, 72, 153, 0.03)" }
+        ];
+
+        function animate() {
+          ctx.clearRect(0, 0, width, height);
+          dots.forEach((dot) => {
+            dot.x += dot.vx;
+            dot.y += dot.vy;
+
+            if (dot.x - dot.r < 0 || dot.x + dot.r > width) dot.vx *= -1;
+            if (dot.y - dot.r < 0 || dot.y + dot.r > height) dot.vy *= -1;
+
+            const grad = ctx.createRadialGradient(dot.x, dot.y, 0, dot.x, dot.y, dot.r);
+            grad.addColorStop(0, dot.color);
+            grad.addColorStop(1, "rgba(255, 255, 255, 0)");
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.arc(dot.x, dot.y, dot.r, 0, Math.PI * 2);
+            ctx.fill();
+          });
+          requestAnimationFrame(animate);
+        }
+        animate();
+      }
+
+      // Slider Dragging Functionality
+      let isDraggingSlider = false;
+
+      function initCompareSlider() {
+        const container = document.getElementById("compare-slider-container");
+        const afterClip = document.getElementById("compare-after-clip");
+        const handle = document.getElementById("compare-handle");
+        if (!container || !afterClip || !handle) return;
+
+        function updateSlider(clientX) {
+          const rect = container.getBoundingClientRect();
+          let position = ((clientX - rect.left) / rect.width) * 100;
+          position = Math.max(0, Math.min(100, position)); // constrain between 0% and 100%
+
+          afterClip.style.clipPath = `inset(0 0 0 ${position}%)`;
+          handle.style.left = `${position}%`;
+        }
+
+        container.addEventListener("mousedown", (e) => {
+          isDraggingSlider = true;
+          updateSlider(e.clientX);
+        });
+
+        window.addEventListener("mouseup", () => {
+          isDraggingSlider = false;
+        });
+
+        window.addEventListener("mousemove", (e) => {
+          if (!isDraggingSlider) return;
+          updateSlider(e.clientX);
+        });
+
+        container.addEventListener("touchstart", (e) => {
+          isDraggingSlider = true;
+          updateSlider(e.touches[0].clientX);
+        });
+
+        window.addEventListener("touchend", () => {
+          isDraggingSlider = false;
+        });
+
+        window.addEventListener("touchmove", (e) => {
+          if (!isDraggingSlider) return;
+          updateSlider(e.touches[0].clientX);
+        });
+      }
+
+      function animateSlider(from, to, duration = 800) {
+        const start = performance.now();
+        function frame(now) {
+          if (isDraggingSlider) return; // Allow user interaction to override animation
+          const elapsed = now - start;
+          const ratio = Math.min(elapsed / duration, 1);
+          const current = from + (to - from) * easeOutQuad(ratio);
+          
+          const afterClip = document.getElementById("compare-after-clip");
+          const handle = document.getElementById("compare-handle");
+          if (afterClip && handle) {
+            afterClip.style.clipPath = `inset(0 0 0 ${current}%)`;
+            handle.style.left = `${current}%`;
+          }
+
+          if (ratio < 1) {
+            requestAnimationFrame(frame);
+          }
+        }
+        requestAnimationFrame(frame);
+      }
+
+      function easeOutQuad(x) {
+        return 1 - (1 - x) * (1 - x);
+      }
+
+      // Scroll Reveal Animation (Intersection Observer)
+      function initScrollReveal() {
+        const reveals = document.querySelectorAll(".scroll-reveal, .feature-card, .glass-panel, .demo-card");
+        
+        // Add scroll-reveal class dynamically to improve initial loading experience
+        reveals.forEach((el) => {
+          el.classList.add("scroll-reveal");
+        });
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("active");
+              }
+            });
+          },
+          { threshold: 0.15 }
+        );
+
+        reveals.forEach((el) => observer.observe(el));
+      }
+
       document.addEventListener("DOMContentLoaded", () => {
-        setPortraitImage(defaultPortraitSvg);
+        initAmbientGlow();
+        initCompareSlider();
+        initScrollReveal();
         renderGarmentTiles();
         renderWalkthroughStep(activeWalkthroughStep);
+        
         window.setInterval(() => {
           activeWalkthroughStep = (activeWalkthroughStep + 1) % walkthroughSteps.length;
           renderWalkthroughStep(activeWalkthroughStep);
