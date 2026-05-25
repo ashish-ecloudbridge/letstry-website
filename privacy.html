@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <title>Privacy Policy | letstry.online</title>
+    <meta name="description" content="Privacy Policy and Data Processing Notice for letstry.online universal AI virtual fitting room extension." />
+    <meta name="robots" content="index, follow" />
+    
+    <link rel="icon" type="image/png" href="logo.png" />
+    <link rel="apple-touch-icon" href="logo.png" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Plus Jakarta Sans", "Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+            },
+            colors: {
+              ink: "#0b1120",
+              sand: "#eef4ff",
+              linen: "#f8fbff",
+              gold: "#1d4ed8",
+              espresso: "#172554",
+              mint: "#dbeafe",
+              pine: "#1e40af",
+              navy: "#0f172a",
+            },
+            boxShadow: {
+              glow: "0 25px 80px rgba(29, 78, 216, 0.15)",
+              card: "0 12px 36px rgba(15, 23, 42, 0.08)",
+            },
+            backgroundImage: {
+              mesh:
+                "radial-gradient(circle at top left, rgba(29,78,216,0.15), transparent 35%), radial-gradient(circle at top right, rgba(139,92,246,0.1), transparent 30%), linear-gradient(180deg, rgba(255,255,255,0.98), rgba(238,244,255,0.95))",
+            },
+          },
+        },
+      };
+    </script>
+    
+    <style type="text/tailwindcss">
+      @layer components {
+        .section-shell {
+          @apply mx-auto max-w-4xl px-4 sm:px-6 lg:px-8;
+        }
+
+        .nav-link {
+          @apply text-sm font-semibold text-stone-600 transition hover:text-ink relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-gold after:transition-all hover:after:w-full;
+        }
+
+        .primary-btn {
+          @apply inline-flex items-center justify-center rounded-full bg-gradient-to-r from-ink to-slate-800 px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-black/10 transition duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-blue-500/10 focus:outline-none focus:ring-2 focus:ring-ink/20;
+        }
+
+        .glass-panel {
+          @apply rounded-[2.25rem] border border-white/85 bg-white/70 shadow-glow backdrop-blur-xl;
+        }
+
+        .eyebrow {
+          @apply text-xs font-bold uppercase tracking-[0.3em] text-gold;
+        }
+      }
+    </style>
+    
+    <!-- Micro-interactions & Animations -->
+    <style>
+      .scroll-reveal {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .scroll-reveal.active {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    </style>
+  </head>
+  <body class="bg-linen font-sans text-ink antialiased">
+    <!-- Ambient Glow Canvas -->
+    <canvas id="ambient-glow" class="fixed inset-0 -z-20 pointer-events-none opacity-60"></canvas>
+
+    <div class="relative overflow-hidden">
+      <!-- Gradient Mesh background -->
+      <div class="absolute inset-x-0 top-0 -z-10 h-[38rem] bg-mesh"></div>
+      <div class="absolute left-1/2 top-20 -z-10 h-72 w-72 -translate-x-1/2 rounded-full bg-gold/20 blur-3xl"></div>
+
+      <!-- Navigation Header -->
+      <header class="fixed inset-x-0 top-0 z-50 border-b border-white/60 bg-white/80 backdrop-blur-xl">
+        <nav class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex h-20 items-center justify-between gap-4">
+          <a href="index.html" class="flex items-center gap-3">
+            <div class="relative flex h-14 w-14 items-center justify-center overflow-hidden rounded-[1.1rem] border border-slate-200 bg-white shadow-sm">
+              <img
+                src="logo.png"
+                alt="letstry.online logo"
+                class="h-12 w-12 rounded-[0.95rem] object-contain"
+              />
+            </div>
+            <div>
+              <p class="text-base font-extrabold tracking-tight text-ink sm:text-lg">letstry.online</p>
+              <p class="hidden text-xs text-stone-500 sm:block">AI fitting room extension for Chrome</p>
+            </div>
+          </a>
+
+          <div class="flex items-center gap-4">
+            <a href="index.html" class="nav-link">← Back to Home</a>
+            <a href="https://chromewebstore.google.com/" target="_blank" rel="noreferrer" class="primary-btn hidden sm:inline-flex">
+              Add to Chrome
+            </a>
+          </div>
+        </nav>
+      </header>
+
+      <!-- Main Content Container -->
+      <main class="section-shell pt-36 pb-24">
+        <div class="glass-panel p-8 sm:p-12 md:p-16 scroll-reveal active">
+          <span class="eyebrow">Trust &amp; Transparency</span>
+          <h1 class="mt-4 text-3xl font-extrabold tracking-tight text-ink sm:text-4xl md:text-5xl">
+            Privacy Policy &amp; Data processing
+          </h1>
+          <p class="mt-3 text-sm text-stone-500">Last updated: May 25, 2026</p>
+
+          <hr class="my-8 border-stone-200" />
+
+          <!-- Privacy content blocks -->
+          <div class="prose prose-stone max-w-none text-stone-600 leading-7 space-y-8">
+            
+            <section class="space-y-3">
+              <h2 class="text-xl font-bold text-ink tracking-tight">Introduction</h2>
+              <p>
+                At letstry.online, we believe your virtual fitting room experience should be entirely private, secure, and secure by design. This Privacy Policy details how we handle information in connection with the letstry.online Chrome Extension (the "Extension") and the website located at letstry.online (the "Service").
+              </p>
+              <p>
+                We do not sell, rent, or trade shopper portrait files, search terms, or browser history.
+              </p>
+            </section>
+
+            <section id="photo-processing" class="space-y-3 scroll-mt-24">
+              <h2 class="text-xl font-bold text-ink tracking-tight flex items-center gap-2">
+                <span class="text-gold">✦</span> 1. Volatile Photo Processing
+              </h2>
+              <p>
+                To provide virtual try-on previews, the Extension requires a portrait photo. This photo is processed as follows:
+              </p>
+              <ul class="list-disc pl-5 space-y-2">
+                <li>
+                  <strong>Short-lived Local Storage</strong>: Your selfie photo is stored locally on your device via <code>chrome.storage.local</code>. It stays on your computer and is never saved permanently on our servers.
+                </li>
+                <li>
+                  <strong>Volatile AI Processing</strong>: When you generate a try-on look, the photo is sent to our secure API endpoints solely for the duration of the blending/rendering operation. It is automatically cleared immediately after the composite preview image is returned to your browser.
+                </li>
+                <li>
+                  <strong>Offline Fallback (Simulator)</strong>: If our API is offline or you use the simulated Try-On feature, your photo is processed entirely <strong>client-side</strong> on your own computer using the HTML5 Canvas API. No image data is transmitted over the network.
+                </li>
+              </ul>
+            </section>
+
+            <section class="space-y-3">
+              <h2 class="text-xl font-bold text-ink tracking-tight flex items-center gap-2">
+                <span class="text-gold">✦</span> 2. Storefront Garment Scraping
+              </h2>
+              <p>
+                The Extension contains content scripts that run on the shopping websites you browse.
+              </p>
+              <ul class="list-disc pl-5 space-y-2">
+                <li>
+                  <strong>Storefront Scrape</strong>: The content script only active-scrapes when you hover a product image and click the "👗 Try on letstry.online" button.
+                </li>
+                <li>
+                  <strong>Captured Metadata</strong>: It captures the image URL, product title, and price. This is stored temporarily in local storage to configure the try-on compositor.
+                </li>
+                <li>
+                  <strong>No Tracking of History</strong>: We do not log your browsing history or record the storefront pages you visit unless you explicitly choose to interact with the try-on button.
+                </li>
+              </ul>
+            </section>
+
+            <section class="space-y-3">
+              <h2 class="text-xl font-bold text-ink tracking-tight flex items-center gap-2">
+                <span class="text-gold">✦</span> 3. Google Identity &amp; Sign-In
+              </h2>
+              <p>
+                To secure analytics, track affiliate performance, and prevent duplicate account creation, the Extension uses Google OAuth for sign-in:
+              </p>
+              <ul class="list-disc pl-5 space-y-2">
+                <li>
+                  <strong>Requested Scopes</strong>: We request access to your basic profile (email, profile name, and picture).
+                </li>
+                <li>
+                  <strong>Usage</strong>: The picture and email are displayed in your personal dashboard chip at the bottom of the extension side panel. Your unique user ID is used to safely route outbound telemetry event attributes to prevent duplicate conversions.
+                </li>
+              </ul>
+            </section>
+
+            <section id="affiliate-disclosure" class="space-y-3 scroll-mt-24">
+              <h2 class="text-xl font-bold text-ink tracking-tight flex items-center gap-2">
+                <span class="text-gold">✦</span> 4. Telemetry and Outbound Clicks
+              </h2>
+              <p>
+                When you click "Buy This Look" or generate a try-on result, the Extension sends secure telemetry events to our backend. This includes:
+              </p>
+              <ul class="list-disc pl-5 space-y-2">
+                <li>
+                  The event type (e.g. <code>TRY_ON_CLICK</code>, <code>OUTBOUND_AFFILIATE_CLICK</code>).
+                </li>
+                <li>
+                  The brand domain and anonymized product category.
+                </li>
+                <li>
+                  These metrics are displayed in aggregate on the administrative dashboard. No individual identity metrics or shopper portrait files are linked to these public compliance telemetry streams.
+                </li>
+              </ul>
+            </section>
+
+            <section class="space-y-3">
+              <h2 class="text-xl font-bold text-ink tracking-tight flex items-center gap-2">
+                <span class="text-gold">✦</span> 5. Data Security and Deletion
+              </h2>
+              <p>
+                You have complete control over your virtual try-on data:
+              </p>
+              <ul class="list-disc pl-5 space-y-2">
+                <li>
+                  <strong>Delete local data</strong>: You can delete your portrait at any time by clicking "Step Back & Retry" or clearing the extension's local storage.
+                </li>
+                <li>
+                  <strong>Logout</strong>: Logging out clears your active Google OAuth session token and removes your local session attributes instantly.
+                </li>
+              </ul>
+            </section>
+
+            <section class="space-y-3">
+              <h2 class="text-xl font-bold text-ink tracking-tight">Compliance &amp; Questions</h2>
+              <p>
+                If you have questions about our data practices or wish to request immediate manual account/data deletions, please reach out to us at:
+              </p>
+              <p class="font-semibold text-ink">
+                privacy@letstry.online
+              </p>
+            </section>
+
+          </div>
+        </div>
+      </main>
+
+      <!-- Footer (Matching index.html) -->
+      <footer class="border-t border-stone-200 bg-white/90 relative z-10">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 grid gap-8 py-10 lg:grid-cols-[1.2fr_0.8fr]">
+          <div>
+            <div class="flex items-center gap-3">
+              <img src="logo.png" alt="letstry.online logo" class="h-12 w-12 rounded-2xl object-contain shadow-card" />
+              <div>
+                <p class="text-lg font-bold tracking-tight text-ink">letstry.online</p>
+                <p class="text-xs text-stone-500">Click. See. Wear.</p>
+              </div>
+            </div>
+            <p class="mt-3 max-w-2xl text-sm leading-7 text-stone-600">
+              Built for fast apparel visualization, privacy-conscious customer sessions, and measurable commerce
+              performance across modern fashion storefronts.
+            </p>
+            <div class="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm">
+              <a href="privacy.html" class="legal-link">Privacy Policy</a>
+              <a href="privacy.html#photo-processing" class="legal-link">Photo Processing Notice</a>
+              <a href="privacy.html#affiliate-disclosure" class="legal-link">Affiliate Disclosure</a>
+            </div>
+          </div>
+
+          <div class="rounded-[1.75rem] border border-stone-200 bg-sand p-5">
+            <p class="text-xs font-semibold uppercase tracking-[0.22em] text-stone-500">Compliance &amp; Analytics</p>
+            <div class="mt-4 grid gap-4 text-sm text-stone-600">
+              <div>
+                <p class="font-semibold text-ink">Volatile photo processing</p>
+                <p class="mt-1">
+                  User photos are processed for fit visualization and should be treated as short-lived session media
+                  rather than persistent content libraries.
+                </p>
+              </div>
+              <div>
+                <p class="font-semibold text-ink">User control</p>
+                <p class="mt-1">
+                  Privacy links, consent prompts, and deletion language should remain visible anywhere portrait upload
+                  or camera capture is offered.
+                </p>
+              </div>
+              <div>
+                <p class="font-semibold text-ink">Aggregate analytics indicator</p>
+                <p class="mt-1">
+                  This site may display anonymized, aggregate try-on and outbound affiliate activity to help operators
+                  understand demand, conversion intent, and merchant performance.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="border-t border-stone-200">
+          <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col gap-2 py-5 text-xs text-stone-500 sm:flex-row sm:items-center sm:justify-between">
+            <p>&copy; 2026 letstry.online. All rights reserved.</p>
+            <p>Chrome is a trademark of Google LLC. letstry.online is an independent product.</p>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <!-- Background glow animation script -->
+    <script>
+      function initAmbientGlow() {
+        const canvas = document.getElementById("ambient-glow");
+        if (!canvas) return;
+        const ctx = canvas.getContext("2d");
+        let width = (canvas.width = window.innerWidth);
+        let height = (canvas.height = window.innerHeight);
+
+        window.addEventListener("resize", () => {
+          width = canvas.width = window.innerWidth;
+          height = canvas.height = window.innerHeight;
+        });
+
+        const dots = [
+          { x: width * 0.15, y: height * 0.25, vx: 0.12, vy: 0.06, r: 350, color: "rgba(59, 130, 246, 0.05)" },
+          { x: width * 0.85, y: height * 0.35, vx: -0.08, vy: 0.09, r: 400, color: "rgba(139, 92, 246, 0.04)" },
+          { x: width * 0.5, y: height * 0.75, vx: 0.06, vy: -0.06, r: 380, color: "rgba(236, 72, 153, 0.03)" }
+        ];
+
+        function animate() {
+          ctx.clearRect(0, 0, width, height);
+          dots.forEach((dot) => {
+            dot.x += dot.vx;
+            dot.y += dot.vy;
+
+            if (dot.x - dot.r < 0 || dot.x + dot.r > width) dot.vx *= -1;
+            if (dot.y - dot.r < 0 || dot.y + dot.r > height) dot.vy *= -1;
+
+            const grad = ctx.createRadialGradient(dot.x, dot.y, 0, dot.x, dot.y, dot.r);
+            grad.addColorStop(0, dot.color);
+            grad.addColorStop(1, "rgba(255, 255, 255, 0)");
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.arc(dot.x, dot.y, dot.r, 0, Math.PI * 2);
+            ctx.fill();
+          });
+          requestAnimationFrame(animate);
+        }
+        animate();
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        initAmbientGlow();
+        
+        // Simple scroll reveal triggers
+        const reveals = document.querySelectorAll(".scroll-reveal");
+        reveals.forEach(el => el.classList.add("active"));
+      });
+    </script>
+  </body>
+</html>
