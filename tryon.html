@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LetsTry.online | AI Virtual Try-On Portal</title>
+  <meta name="description" content="Try on any clothing from any store in seconds. Sign in with Google, paste a product URL, snap a selfie, and see how it looks on you." />
+  <link rel="icon" type="image/png" href="logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- Razorpay checkout SDK -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <!-- Google Identity Services (GIS) SDK -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <style>
+    :root {
+      --ink: #0b1120;
+      --brand: #1d4ed8;
+      --brand-light: rgba(29,78,216,0.08);
+      --brand-mid: rgba(29,78,216,0.18);
+      --surface: rgba(255,255,255,0.78);
+      --surface-strong: #fff;
+      --bg: linear-gradient(135deg,#eef4ff 0%,#f8fbff 50%,#e8f0fe 100%);
+      --line: rgba(30,58,138,0.12);
+      --muted: #64748b;
+      --success: #0f766e;
+      --danger: #b91c1c;
+      --radius: 20px;
+      --shadow: 0 8px 32px rgba(29,78,216,0.12);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-family: 'Plus Jakarta Sans', 'Inter', ui-sans-serif, system-ui, sans-serif; color: var(--ink); }
+    body { background: var(--bg); min-height: 100vh; }
+
+    /* ── Header ── */
+    .site-header {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(255,255,255,0.85); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--line);
+      padding: 0 24px; height: 64px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .site-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); }
+    .site-logo img { width: 36px; height: 36px; border-radius: 10px; }
+    .site-logo-name { font-weight: 800; font-size: 1rem; }
+    .header-right { display: flex; align-items: center; gap: 12px; }
+    .credit-pill {
+      display: flex; align-items: center; gap: 6px;
+      padding: 5px 14px; border-radius: 999px;
+      background: var(--brand-light); border: 1px solid var(--brand-mid);
+      font-size: 13px; font-weight: 600; color: var(--brand);
+    }
+    .credit-pill.low { background: rgba(185,28,28,0.07); border-color: rgba(185,28,28,0.18); color: var(--danger); }
+    .btn-buy {
+      padding: 6px 16px; border-radius: 999px; font-size: 13px; font-weight: 700;
+      background: var(--brand); color: #fff; border: none; cursor: pointer;
+      transition: background 0.18s, transform 0.15s;
+    }
+    .btn-buy:hover { background: #1e40af; transform: translateY(-1px); }
+    .user-avatar-chip {
+      display: flex; align-items: center; gap: 8px;
+      padding: 4px 12px 4px 4px; border-radius: 999px;
+      border: 1px solid var(--line); background: var(--surface);
+      font-size: 13px; font-weight: 600;
+    }
+    .user-avatar-img {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--brand); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; overflow: hidden; flex-shrink: 0;
+    }
+    .user-avatar-img img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+    .btn-signout {
+      background: none; border: 1px solid var(--line); border-radius: 999px;
+      padding: 5px 12px; font-size: 12px; font-weight: 600; color: var(--muted); cursor: pointer;
+      transition: border-color 0.18s, color 0.18s;
+    }
+    .btn-signout:hover { border-color: var(--brand); color: var(--brand); }
+
+    /* ── Main layout ── */
+    .portal-main {
+      max-width: 1200px; margin: 0 auto; padding: 32px 20px 60px;
+    }
+    .portal-title {
+      font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 800;
+      letter-spacing: -0.03em; text-align: center; margin-bottom: 8px;
+    }
+    .portal-subtitle {
+      text-align: center; color: var(--muted); font-size: 1rem; margin-bottom: 36px;
+    }
+
+    /* ── Auth gate ── */
+    #auth-gate {
+      max-width: 460px; margin: 80px auto 0; text-align: center;
+    }
+    .auth-card {
+      background: var(--surface-strong); border: 1px solid var(--line);
+      border-radius: 24px; padding: 40px 32px; box-shadow: var(--shadow);
+    }
+    .auth-icon { font-size: 3rem; margin-bottom: 16px; }
+    .auth-title { font-size: 1.4rem; font-weight: 800; margin-bottom: 8px; }
+    .auth-desc { color: var(--muted); font-size: 0.9rem; margin-bottom: 28px; line-height: 1.6; }
+    .btn-google {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 13px 28px; border-radius: 999px; font-size: 15px; font-weight: 700;
+      background: var(--ink); color: #fff; border: none; cursor: pointer;
+      transition: background 0.18s, transform 0.15s;
+    }
+    .btn-google:hover { background: #1e293b; transform: translateY(-1px); }
+    .btn-google svg { width: 18px; height: 18px; flex-shrink: 0; }
+    .auth-note { color: var(--muted); font-size: 11px; margin-top: 16px; }
+
+    /* ── 3-column portal grid ── */
+    #portal-app { display: none; }
+    #portal-app.visible { display: block; }
+    .portal-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+    @media (max-width: 900px) {
+      .portal-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--surface-strong); border: 1px solid var(--line);
+      border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow);
+    }
+    .card-title {
+      font-size: 0.85rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--brand); margin-bottom: 16px;
+    }
+
+    /* ── Selfie card ── */
+    .selfie-preview-shell {
+      position: relative; border-radius: 14px; overflow: hidden;
+      background: #f1f5f9; aspect-ratio: 3/4;
+      display: flex; align-items: center; justify-content: center;
+      border: 2px dashed var(--line); cursor: pointer;
+    }
+    .selfie-preview-shell video,
+    .selfie-preview-shell img { width: 100%; height: 100%; object-fit: cover; }
+    .selfie-placeholder {
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+      color: var(--muted); font-size: 0.85rem; text-align: center; padding: 20px;
+    }
+    .selfie-placeholder svg { opacity: 0.35; }
+    .btn-row { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+    .btn-primary {
+      flex: 1; padding: 10px 14px; border-radius: 12px; font-size: 13px; font-weight: 700;
+      background: var(--brand); color: #fff; border: none; cursor: pointer;
+      transition: background 0.18s, transform 0.15s; white-space: nowrap;
+    }
+    .btn-primary:hover { background: #1e40af; transform: translateY(-1px); }
+    .btn-secondary {
+      flex: 1; padding: 10px 14px; border-radius: 12px; font-size: 13px; font-weight: 700;
+      background: var(--brand-light); color: var(--brand);
+      border: 1px solid var(--brand-mid); cursor: pointer;
+      transition: background 0.18s, transform 0.15s; white-space: nowrap;
+    }
+    .btn-secondary:hover { background: var(--brand-mid); transform: translateY(-1px); }
+    .btn-full {
+      width: 100%; padding: 12px; border-radius: 12px; font-size: 14px; font-weight: 700;
+      background: var(--brand); color: #fff; border: none; cursor: pointer;
+      transition: background 0.18s, transform 0.15s; margin-top: 8px;
+    }
+    .btn-full:hover:not(:disabled) { background: #1e40af; transform: translateY(-1px); }
+    .btn-full:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    /* ── Garment card ── */
+    .garment-url-row { display: flex; gap: 8px; }
+    .url-input {
+      flex: 1; padding: 10px 14px; border-radius: 12px; font-size: 13px;
+      border: 1.5px solid var(--line); background: #f8fafc; color: var(--ink);
+      outline: none; transition: border-color 0.18s;
+    }
+    .url-input:focus { border-color: var(--brand); }
+    .garment-preview-shell {
+      margin-top: 14px; border-radius: 14px; overflow: hidden; position: relative;
+      border: 1.5px solid var(--line); background: #f1f5f9;
+    }
+    /* iframe zone */
+    .iframe-zone {
+      width: 100%; height: 320px; border: none; display: block;
+      background: #f1f5f9;
+    }
+    .garment-capture-overlay {
+      position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+      background: rgba(15,23,42,0.85); color: #fff; border: none;
+      border-radius: 999px; padding: 8px 20px; font-size: 12px; font-weight: 700;
+      cursor: pointer; backdrop-filter: blur(6px); white-space: nowrap;
+      transition: background 0.18s;
+    }
+    .garment-capture-overlay:hover { background: var(--brand); }
+    .garment-captured-img {
+      width: 100%; aspect-ratio: 4/5; object-fit: contain;
+      background: #f8fafc; display: none;
+    }
+    .garment-captured-img.visible { display: block; }
+    .garment-placeholder {
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+      color: var(--muted); font-size: 0.85rem; text-align: center; padding: 40px 20px;
+    }
+    .garment-status { font-size: 11px; color: var(--muted); margin-top: 8px; min-height: 16px; }
+
+    /* ── Result card ── */
+    .compare-container {
+      position: relative; overflow: hidden; border-radius: 14px;
+      aspect-ratio: 3/4; background: #f1f5f9; select-none;
+      border: 1.5px solid var(--line);
+    }
+    .compare-before, .compare-after {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; border-radius: 14px;
+    }
+    .compare-after-clip {
+      position: absolute; inset: 0;
+      clip-path: inset(0 0 0 50%);
+      transition: clip-path 0s;
+    }
+    .compare-after-clip img { width: 100%; height: 100%; object-fit: cover; }
+    .compare-handle {
+      position: absolute; top: 0; bottom: 0; width: 2px;
+      background: #fff; left: 50%; cursor: ew-resize; z-index: 10;
+      box-shadow: 0 0 8px rgba(0,0,0,0.3);
+      display: none;
+    }
+    .compare-handle-circle {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 36px; height: 36px; border-radius: 50%; background: #fff;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+      font-size: 11px; color: #94a3b8; font-weight: 700;
+    }
+    .compare-handle.visible { display: block; }
+    .result-empty {
+      position: absolute; inset: 0; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 12px; padding: 24px;
+      color: var(--muted); font-size: 0.85rem; text-align: center;
+    }
+    .result-empty svg { opacity: 0.25; }
+    .scanning-beam {
+      position: absolute; left: 0; right: 0; height: 4px;
+      background: linear-gradient(90deg, transparent, #6366f1, transparent);
+      box-shadow: 0 0 10px rgba(99,102,241,0.6);
+      animation: scan 2s linear infinite; z-index: 5; display: none;
+    }
+    @keyframes scan { 0% { top: 0; } 50% { top: 100%; } 100% { top: 0; } }
+    .scanning-beam.visible { display: block; }
+
+    /* ── Progress ── */
+    .progress-area { display: none; margin-top: 14px; }
+    .progress-area.visible { display: block; }
+    .progress-label { font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 6px; }
+    .progress-track {
+      height: 4px; background: var(--brand-light); border-radius: 999px; overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%; background: var(--brand); border-radius: 999px;
+      transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1); width: 0;
+    }
+
+    /* ── Status message ── */
+    .status-msg {
+      font-size: 12px; color: var(--muted); margin-top: 8px; min-height: 18px; text-align: center;
+    }
+    .status-msg.error { color: var(--danger); }
+    .status-msg.success { color: var(--success); }
+
+    /* ── Credit packs modal ── */
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(11,17,32,0.55);
+      z-index: 100; display: flex; align-items: center; justify-content: center;
+      padding: 20px; display: none;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal-card {
+      background: #fff; border-radius: 24px; padding: 36px 32px;
+      max-width: 460px; width: 100%; box-shadow: 0 24px 64px rgba(0,0,0,0.2);
+      animation: modal-in 0.25s cubic-bezier(0.16,1,0.3,1);
+    }
+    @keyframes modal-in { from { opacity: 0; transform: scale(0.94) translateY(16px); } }
+    .modal-title { font-size: 1.3rem; font-weight: 800; margin-bottom: 6px; }
+    .modal-desc { color: var(--muted); font-size: 0.88rem; margin-bottom: 24px; }
+    .pack-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+    .pack-card {
+      border: 2px solid var(--line); border-radius: 16px; padding: 18px 12px;
+      text-align: center; cursor: pointer; transition: border-color 0.18s, background 0.18s;
+    }
+    .pack-card:hover, .pack-card.selected { border-color: var(--brand); background: var(--brand-light); }
+    .pack-credits { font-size: 1.6rem; font-weight: 800; color: var(--brand); }
+    .pack-label { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+    .pack-price { font-size: 1rem; font-weight: 700; margin-top: 6px; }
+    .modal-btn-row { display: flex; gap: 10px; }
+    .btn-cancel {
+      flex: 1; padding: 12px; border-radius: 12px; font-size: 14px; font-weight: 700;
+      background: none; border: 1.5px solid var(--line); color: var(--muted); cursor: pointer;
+    }
+
+    /* ── Download bar ── */
+    .result-actions { display: none; margin-top: 12px; gap: 8px; flex-wrap: wrap; }
+    .result-actions.visible { display: flex; }
+    .btn-download {
+      flex: 1; padding: 10px; border-radius: 12px; font-size: 13px; font-weight: 700;
+      background: var(--brand-light); color: var(--brand); border: 1px solid var(--brand-mid);
+      text-align: center; text-decoration: none; cursor: pointer; transition: background 0.18s;
+    }
+    .btn-download:hover { background: var(--brand-mid); }
+
+    /* ── Responsive helpers ── */
+    input[type="file"] { display: none; }
+    .generate-area { text-align: center; padding: 16px 0 0; }
+    .generate-big-btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 14px 36px; border-radius: 999px; font-size: 15px; font-weight: 800;
+      background: linear-gradient(135deg, var(--brand), #6366f1); color: #fff;
+      border: none; cursor: pointer; box-shadow: 0 8px 24px rgba(29,78,216,0.25);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .generate-big-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(29,78,216,0.3); }
+    .generate-big-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .generate-credit-note { font-size: 11px; color: var(--muted); margin-top: 6px; }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="site-header">
+    <a href="/" class="site-logo">
+      <img src="logo.png" alt="letstry.online logo" onerror="this.style.display='none'" />
+      <span class="site-logo-name">letstry.online</span>
+    </a>
+    <div class="header-right" id="header-right">
+      <a href="/" style="font-size:13px;font-weight:600;color:#64748b;text-decoration:none;">← Back</a>
+    </div>
+  </header>
+
+  <!-- Auth gate -->
+  <div id="auth-gate">
+    <div class="auth-card">
+      <div class="auth-icon">👗</div>
+      <h1 class="auth-title">AI Virtual Try-On Portal</h1>
+      <p class="auth-desc">
+        Sign in with Google to try on any garment from any online store.
+        5 free try-ons every month — no extension needed.
+      </p>
+      <button class="btn-google" id="sign-in-btn" onclick="startSignIn()">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+        </svg>
+        Continue with Google
+      </button>
+      <p class="auth-note">5 free credits/month. ₹99 for 10 more. Cancel anytime.</p>
+    </div>
+  </div>
+
+  <!-- Portal app (shown after auth) -->
+  <div id="portal-app" class="portal-main">
+    <h1 class="portal-title">AI Virtual Try-On ✨</h1>
+    <p class="portal-subtitle">Paste a garment URL, snap a selfie, and see how it looks on you.</p>
+
+    <div class="portal-grid">
+
+      <!-- Col 1: Selfie -->
+      <div class="card">
+        <p class="card-title">📸 Your Photo</p>
+        <div class="selfie-preview-shell" id="selfie-shell" onclick="selfieShellClick()">
+          <video id="webcam-video" autoplay muted playsinline style="display:none"></video>
+          <img id="selfie-img" alt="Your selfie" style="display:none" />
+          <div class="selfie-placeholder" id="selfie-placeholder">
+            <svg width="48" height="48" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
+            </svg>
+            <span>Click to open camera or upload</span>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn-primary" id="camera-btn" onclick="startCamera()">📷 Camera</button>
+          <button class="btn-secondary" onclick="document.getElementById('file-upload').click()">📁 Upload</button>
+          <button class="btn-secondary" id="capture-btn" style="display:none" onclick="captureSnapshot()">⚡ Snap</button>
+        </div>
+        <input type="file" id="file-upload" accept="image/*" onchange="handleFileUpload(event)" />
+        <canvas id="capture-canvas" style="display:none"></canvas>
+      </div>
+
+      <!-- Col 2: Garment -->
+      <div class="card">
+        <p class="card-title">👕 Garment</p>
+        <div class="garment-url-row">
+          <input type="url" id="garment-url" class="url-input" placeholder="Paste Myntra/Zara/H&M product URL…" oninput="onGarmentUrlInput()" />
+          <button class="btn-primary" style="flex:0;padding:10px 14px;" onclick="loadGarmentUrl()">Load</button>
+        </div>
+        <p class="garment-status" id="garment-status">Paste a product URL above to start.</p>
+
+        <div class="garment-preview-shell" id="garment-preview-shell" style="display:none">
+          <!-- iframe mode -->
+          <div id="iframe-zone" style="display:none; position:relative;">
+            <iframe id="garment-iframe" class="iframe-zone" sandbox="allow-scripts allow-same-origin" title="Product page preview"></iframe>
+            <button class="garment-capture-overlay" onclick="captureIframe()">📸 Capture Garment</button>
+          </div>
+          <!-- captured image mode -->
+          <img id="garment-captured" class="garment-captured-img" alt="Captured garment" />
+        </div>
+
+        <!-- fallback: direct image upload -->
+        <button class="btn-full btn-secondary" style="margin-top:12px;" onclick="document.getElementById('garment-upload').click()">
+          Or upload garment image directly
+        </button>
+        <input type="file" id="garment-upload" accept="image/*" onchange="handleGarmentUpload(event)" />
+      </div>
+
+      <!-- Col 3: Result -->
+      <div class="card">
+        <p class="card-title">🪄 AI Result</p>
+        <div class="compare-container" id="compare-container">
+          <img class="compare-before" id="compare-before" src="" alt="Before" style="display:none" />
+          <div class="compare-after-clip" id="compare-after-clip" style="clip-path:inset(0 0 0 50%)">
+            <img id="compare-after" src="" alt="After try-on" />
+          </div>
+          <div class="scanning-beam" id="scanning-beam"></div>
+          <div class="compare-handle" id="compare-handle">
+            <div class="compare-handle-circle">◂ ▸</div>
+          </div>
+          <div class="result-empty" id="result-empty">
+            <svg width="48" height="48" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M9.75 9.75a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"/>
+            </svg>
+            <span>Your try-on result will appear here</span>
+          </div>
+        </div>
+        <div class="progress-area" id="progress-area">
+          <p class="progress-label" id="progress-label">Processing…</p>
+          <div class="progress-track"><div class="progress-bar" id="progress-bar"></div></div>
+        </div>
+        <div class="result-actions" id="result-actions">
+          <a id="download-link" class="btn-download" download="letstry-tryon.jpg">⬇ Download</a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Generate Button row (below grid) -->
+    <div class="generate-area">
+      <button class="generate-big-btn" id="generate-btn" disabled onclick="generateTryOn()">
+        <span>✨</span> Generate Try-On
+      </button>
+      <p class="generate-credit-note" id="generate-credit-note">Sign in to see your credits</p>
+    </div>
+
+    <p class="status-msg" id="status-msg"></p>
+  </div>
+
+  <!-- Buy Credits Modal -->
+  <div class="modal-backdrop" id="credits-modal">
+    <div class="modal-card">
+      <h2 class="modal-title">💳 Buy Try-On Credits</h2>
+      <p class="modal-desc">Credits never expire. 1 credit = 1 AI try-on.</p>
+      <div class="pack-grid" id="pack-grid">
+        <div class="pack-card" onclick="selectPack('pack_10',this)">
+          <div class="pack-credits">10</div>
+          <div class="pack-label">credits</div>
+          <div class="pack-price">₹99</div>
+        </div>
+        <div class="pack-card selected" onclick="selectPack('pack_25',this)">
+          <div class="pack-credits">25</div>
+          <div class="pack-label">credits ✨popular</div>
+          <div class="pack-price">₹199</div>
+        </div>
+        <div class="pack-card" onclick="selectPack('pack_75',this)">
+          <div class="pack-credits">75</div>
+          <div class="pack-label">credits</div>
+          <div class="pack-price">₹499</div>
+        </div>
+      </div>
+      <div class="modal-btn-row">
+        <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+        <button class="btn-full" id="pay-btn" style="margin-top:0;flex:2;" onclick="startPayment()">Pay with Razorpay</button>
+      </div>
+      <p class="status-msg" id="modal-status"></p>
+    </div>
+  </div>
+
+  <script src="tryon.js"></script>
+</body>
+</html>
