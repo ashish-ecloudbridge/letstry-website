@@ -191,10 +191,11 @@
             </div>
           </a>
 
-          <div class="flex items-center gap-3">
+          <div class="flex items-center gap-3" id="nav-actions">
             <a href="#how-it-works" class="nav-link hidden md:inline-flex">How it works</a>
             <a href="#walkthrough" class="nav-link hidden md:inline-flex">Walkthrough</a>
             <a href="#demo" class="nav-link hidden md:inline-flex">Demo</a>
+            <a href="/tryon.html" class="nav-link hidden md:inline-flex" style="color:#1d4ed8;font-weight:700;">✨ Try It Now</a>
             <a href="https://chromewebstore.google.com/" target="_blank" rel="noreferrer" class="primary-btn">
               Add to Chrome — It's Free
             </a>
@@ -998,6 +999,99 @@
         reveals.forEach((el) => observer.observe(el));
       }
 
+      const API_BASE = "https://api.letstry.online/v1"; // Matches tryon.js
+
+      async function checkLoggedInUser() {
+        const token = localStorage.getItem("lt_token");
+        if (!token) return;
+
+        try {
+          // Fetch credits from backend
+          const res = await fetch(`${API_BASE}/credits`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          if (!res.ok) throw new Error("Invalid token");
+
+          const creditsData = await res.json();
+          const credits = creditsData.credits_remaining;
+          localStorage.setItem("lt_credits", credits);
+
+          // Get profile from localStorage
+          let profile = null;
+          const cachedProfile = localStorage.getItem("lt_profile");
+          if (cachedProfile) {
+            profile = JSON.parse(cachedProfile);
+          }
+
+          // Update header actions dynamically
+          const navActions = document.getElementById("nav-actions");
+          if (navActions) {
+            const creditsLow = credits <= 1;
+            const creditPillClass = creditsLow 
+              ? "bg-rose-50 border border-rose-200 text-red-600 hover:bg-rose-100" 
+              : "bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100";
+            
+            let avatarHtml = "";
+            if (profile) {
+              avatarHtml = `
+                <div class="flex items-center gap-2 rounded-full border border-slate-200 bg-white/70 p-1 pr-3 text-xs font-semibold text-slate-800 shadow-sm">
+                  <div class="flex h-7 w-7 items-center justify-center overflow-hidden rounded-full bg-blue-600 text-white font-bold">
+                    ${profile.picture ? `<img src="${profile.picture}" class="h-full w-full object-cover" />` : (profile.given_name || profile.name || "U")[0]}
+                  </div>
+                  <span class="max-w-[80px] truncate">${profile.given_name || profile.name || "User"}</span>
+                </div>
+              `;
+            }
+
+            navActions.innerHTML = `
+              <a href="#how-it-works" class="nav-link hidden md:inline-flex">How it works</a>
+              <a href="#walkthrough" class="nav-link hidden md:inline-flex">Walkthrough</a>
+              <a href="#demo" class="nav-link hidden md:inline-flex">Demo</a>
+              
+              <a href="/tryon.html#buy" class="inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition ${creditPillClass}">
+                ${creditsLow ? "⚠" : "✦"} ${credits} credit${credits !== 1 ? "s" : ""}
+              </a>
+              
+              ${avatarHtml}
+              
+              <a href="/tryon.html" class="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-2.5 text-xs font-bold text-white shadow-md hover:-translate-y-0.5 hover:shadow-lg transition duration-200">
+                Fitting Room ✨
+              </a>
+              <button onclick="signOutMain()" class="text-xs font-semibold text-slate-400 hover:text-slate-600 transition pl-1">
+                Sign out
+              </button>
+            `;
+          }
+        } catch (err) {
+          console.error("Auth check failed:", err);
+          // Token expired or invalid, clean up
+          localStorage.removeItem("lt_token");
+          localStorage.removeItem("lt_profile");
+          localStorage.removeItem("lt_credits");
+        }
+      }
+
+      function signOutMain() {
+        localStorage.removeItem("lt_token");
+        localStorage.removeItem("lt_profile");
+        localStorage.removeItem("lt_credits");
+        window.location.reload();
+      }
+
+      function handleReferralLink() {
+        const params = new URLSearchParams(window.location.search);
+        const ref = params.get("ref");
+        if (ref) {
+          localStorage.setItem("lt_ref", ref);
+          // Log click on the backend
+          fetch(`${API_BASE}/referrals/click`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ referrer_id: ref })
+          }).catch(err => console.error("Could not log referral click:", err));
+        }
+      }
+
       document.addEventListener("DOMContentLoaded", () => {
         initAmbientGlow();
         initCompareSlider();
@@ -1009,6 +1103,12 @@
           activeWalkthroughStep = (activeWalkthroughStep + 1) % walkthroughSteps.length;
           renderWalkthroughStep(activeWalkthroughStep);
         }, 2200);
+
+        // Track referral clicks
+        handleReferralLink();
+
+        // Sync logged in status & credits on landing page
+        checkLoggedInUser();
       });
     </script>
   </body>
